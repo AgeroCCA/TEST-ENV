@@ -1,0 +1,666 @@
+FORMAT: 1A
+HOST: http://api-test.enterprise.agero.com/TTY/V1
+# TTY Roadside Assistance API
+Roadside Assistance service allows the clients to secure roadside assistance service by providing a minimal set of required information. On request being initiated in the backend, the system dispatches a service and sends out a closed loop notification .The following sequence flow demonstrates a successful request for roadside assistance
+
+Clients can do the following operations:
+
+1.  Get a list of Tow Destinations around a disablement location
+2.  Submit a request for Roadside Assistance
+3.  Query the status of an already submitted Roadside Assistance request.
+
+![WorkFlow](https://apiportal.agero.com/sites/default/files/TTY_Workflow.jpg)
+
+##Getting Started
+
+This section describes the basic knowledge that readers should possess before beginning to develop using the API.
+
+ 
+##URI Structure
+
+ 
+
+###HTTPS://HOST:PORT/CONTEXT/VX/PATH
+
+HOST and PORT define the host and port where the application lives. 
+
+CONTEXT is the context of the application, in this case the “TTY”. 
+
+VX is the API version of the API
+
+PATH is the resource URI declared in the REST interface.
+
+For our example, in order to request a Roadside Assistance door, client would construct the URI as follows:
+
+###HTTPS://API-TEST.ENTERPRISE.AGERO.COM:80/TTY/V1/RSA
+
+
+The Base URI is defined to be all parts of the URI up to and including version component (HTTPS://API-TEST.ENTERPRISE.AGERO.COM/TTY/VX/). The Base URI will be communicated to clients of the API who then can use it as prefix to the paths defined for each API operation.
+
+##HTTP-based
+Methods to retrieve data from the API require a GET request. Methods that submit – or create new data – require a POST. Methods that change data require a PUT. Methods that destroy data require a DELETE. Requests to the API that require a particular HTTP method will return an error if the request contains the incorrect method. The POST and PUT verbs are used in requests that have an HTTP body and the request data is housed in the HTTP request body. The GET and DELETE verbs are used in conjunction with requests that have no body. The request data is sent as query strings. Requests that use PUT and DELETE are idempotent. This means that no matter how many times the methods are invoked, the resource state on the server is only changed once.
+
+##What is an Application Key?
+
+Application Key is a client specific component which is used to route requests to the correct instance/implementation of the API. The actual value of this component is decided individually for each client by Agero.
+##How to procure an Application Key?
+
+To develop applications using the API, client must request for Agero to create a unique application key in the back-end system to support the application. The result is that CCAS provide, for your application, a unique application key.
+The application key is an important piece of data. It should not be used by more than one application nor should it be given to other developers.
+
+##REST Services
+
+This section contains detailed information about the API methods.
+
+## Header Parameters
+
+The following extended header parameters will have to be passed in every request
+
+| Header Name | Description | Data Type  | Required  (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|x-apiKey   |Application Key- Assigned Consumer identifier |String  |   Y   |  | Assigned Consumer identifier |
+
+# Group Submit RSA Request
+###Description
+
+Used to submit a Roadside Assistance request. Client is required to submit a set of mandatory data elements to successful submission.
+
+###URL(s)
+BaseURI/RSA
+
+###Extended Header Parameters
+   
+x-apiKey
+    
+###Response Codes
+
+    HTTP 200 : Ok
+    HTTP 400 : Bad Request
+    HTTP 401 : Unauthorized
+    HTTP 403 : Forbidden
+    HTTP 404 : Not Found
+    HTTP 405 : Not Allowed
+    HTTP 500 : Internal Server Error
+    HTTP 501 : Service Unavailable    
+    
+###Request Body Schema
+
+![Request Body Schema](https://apiportal.agero.com/sites/default/files/TTY_RequestBodySchema.jpg)
+
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|requestor   | Encapsulates the callers information  |Caller |   Y   | | Refer to the Requestor section for further details | 
+|disablement Location|Encapsulates the disablement location of the vehicle |DisablementLocation|Y||  Refer to the Disablement Location section for further details |                                                                                                             
+|notification Preferences|Encapsulates the details & preference mode of how the user wants to be notified of the service updates|NotificationPreferences|Y||Refer to the Notification Preferences section for further details|                                                      Preferences section for |notified of the service updates                                                       further details|
+|towDestination|Encapsulates the tow destination mode of how the user wants to be knows where the vehicle needs to be towed to|TowDestination|N||Refer to the Tow Destination section for further details|
+|vehicle|Encapsulates the details of the vehicle which needs roadside assistance|Vehicle|Y||Refer to the Vehicle section for further details|
+|serviceDetails| Encapsulates the details of the roadside| ServiceDetails|Y||Refer to the ServiceDetails section for further details|
+  
+ 
+#####Requestor
+
+![Requestor](https://apiportal.agero.com/sites/default/files/TTY_Requestor.jpg)
+
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|name   | Name of the Caller  |Name |   Y   | | Please refer to Name section for further details. | 
+|callbackNumber|PhoneNumber the caller can be reached at if call centre rep needs to get in touch with caller regarding the case|String|Y|781-306-3562|  Format: xxx-xxx-xxxx This also serves as a reference# if customer needs to call the call centre rep
+|contactInfo   | Customer contact details  |ContactInfo |   Y   | | Please refer to ContactInfo   section for further details. |
+
+#####name
+
+![Name](https://apiportal.agero.com/sites/default/files/TTY_Name.jpg)
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|firstName   | First name of the caller  |String |   Y   |Tommy | Max Length:50  No special characters| 
+|lastName   | Last name of the caller  |String |   Y   |Decourcy | Max Length:50  No special characters| 
+|middleInitial   | Middle Initial of the caller  |String |   Y   | | Max Length:50  No special characters| 
+
+
+
+#####Disablement Location
+
+![Disablement Location](https://apiportal.agero.com/sites/default/files/TTY_disablementLocation.jpg)
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|address   | Encapsulates the address of the disablement  |Address |   Y   | |If provided, takes precedence over geographical Coordinates| 
+|geographical Coordinates   |   |geographical Coordinates |   Y   | | | 
+
+
+#####Tow Destination
+
+![Tow Destination](https://apiportal.agero.com/sites/default/files/TTY_towDestination.jpg)
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|address   | Encapsulates the address of the disablement  |Address |   N   | |If provided, takes precedence over geographical Coordinates| 
+|geographical Coordinates   | GPS coordinates of the tow destination address   |geographical Coordinates |   Y/N   | Home|Please refer to Geographical Coordinates section for further details   | 
+|destinationBusinessName   |Business name of destination where the vehicle needs to be towed to  |String |   Y/N   |PEPBOYS-Everett |Max Length:50 No special characters| 
+|destinationType   | Type of the destination   |String numeration|   Y/N   | Repair Facility |Possible Values (Case Sensitive): Dealership Repair Facility  Other | 
+|towDestinationId   | Tow destination id from Agero’s Tow destination list   |String |   N   |  |If provided, takes precedence over geographical Coordinates and address | 
+
+#####Address
+
+![Address](https://apiportal.agero.com/sites/default/files/TTY_Address.jpg)
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|city   |  |String |   Y   | Boston |Max Length:50 No special characters| 
+|country   |  |String |   Y   | USA |Possible Values: No special characters |
+|state   |  |String |   Y   | MA |Max Length:50 No special characters| 
+|streetAddress1   |  |String |   Y   | 9 High Street |Max Length:50 No special characters| 
+|streetAddress2   |  |String |   N   | Apt B |Max Length:50 No special characters| 
+|zip   |  |String |   Y   | 02115  || 
+   
+    
+#####Geographical Coordinates
+
+![Geographical Coordinates](https://apiportal.agero.com/sites/default/files/TTY_geographicalCoordinates.jpg)
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|longitude   |  Longitude coordinate |Double |   Y   | -122.030725 |
+|latitude   | Latitude Coordinate  |Double |   Y   | 37.33174  |
+
+  
+    
+#####Notification Preferences
+
+![Notification Preferences](https://apiportal.agero.com/sites/default/files/TTY_NotificationPrefernces.jpg)
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|preferred Mode   |  Preferred mode for closed loop notification |String |   Y   | Email |Possible Values(Case Sensitive):SMS VoiceCall Email   |
+|emailId   | Email address of the customer where email notification is to be sent |String |   Y/N  | sjohn@agero.com |Required if Preferred Mode is Email. Optional otherwise|
+|textMessageNumber   | Phone# of the customer where SMS notification is to be sent |String |   Y/N   | 781-306-1234 |Required if Preferred Mode is SMS. Optional otherwise. Format: xxx-xxx-xxxx  |
+|primaryPhoneNumber   | Phone# of the customer where the customer needs to be called for notification updates  |String |  Y/N  | 781-306-1234 |Required if Preferred Mode is VoiceCall.Optional otherwise. Format: xxx-xxx-xxxx|
+
+
+#####ContactInfo
+
+![ContactInfo](https://apiportal.agero.com/sites/default/files/TTY_ContactInfo.jpg)
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|address   | Contact Address of the Membership owner   |Address |   Y   | |  Please refer to Address section for further details | 
+|addressType   | Type of the contact address  |String Enumeration |   N   | Home | Possible Values (Case Sensitive):Home,Work,Other | 
+|phoneNumber   | PhoneNumber of the Membership owner  |String |   N   |  781-306-7578| XXX-XXX-XXXX format where  X- numeric digit| 
+|phoneType   | Type of the phone number   |String Enumeration |   N   |Home | Possible Values (Case Sensitive):Home,Work,Mobile,Other,Fax If no value provided and a phone# is provided, Mobile will be considered by default  | 
+
+                            
+#####Vehicle
+
+![Vehicle](https://apiportal.agero.com/sites/default/files/TTY_Vehicle.jpg)
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|vin   |  Vehicle Identification number of the Vehicle   |String |   N   |  |17 chars No special characters allowed   |
+|mileage   |  Mileage on Odometer of vehicle   |Integer |   N   | 14532 |NNNNN format NNNNN format  |
+|year   |  Year built   |String |   Y   | 2012 |YYYY format.Y- numeric digit   |
+|make   |     |String |   Y    |  | Max Length:50  No special characters allowed   |
+|model   |    |String |   Y    |  |Max Length:50  No special characters allowed    |
+|color   |  Color of vehicle   |String |   N    |  Blue |Max Length:50  No special characters allowed    |
+|licensePlate   |  Plate # of Vehicle   |String |   N    | 198NP4|Max Length:50  No special characters allowed    |
+|fuelType   |  FuelType of the vehicle    |String |   N    | HKJ656568GJGJH|This is helpful if the user is requesting Roadside Assistance for “Out of Fuel” disablement reason.Possible Values (Case Sensitive):Gasoline Diesel|
+
+
+
+#####ServiceDetails
+
+![ServiceDetails](https://apiportal.agero.com/sites/default/files/TTY_ServiceDetails.jpg)
+
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|disablementReason   |   Type of Roadside Assistance being requested  |String Enumeration |   Y   | Multiple Flat Tire  |Possible Values(Case Sensitive): Lockout – Keys in car Out of Fuel.... Please refer to Disablement Reason Descriptions for detailed description of disablement reasons and when they need to be used. |
+|comments   |  Additional comments that need to be associated with the  Roadside Assistance request. |Array of Comment |   N   | Two Flat Tires |  |
+
+
+#####ContactAddress
+
+![ContactAddress](https://apiportal.agero.com/sites/default/files/TTY_ContactAddress.jpg)
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|city   |   |String|   Y   | Boston | Max Length:50 No special characters |
+|country   |   |String|   N   | USA | Max Length:50 No special characters |
+|state   |   |String|   Y   | MA | Max Length:50 No special characters |
+|streetAddress1   |   |String|   N   | 9 High Street | Max Length:50 No special characters |
+|streetAddress2   |   |String|   N   | Apt B. | Max Length:50 No special characters |
+|zip   |   |String|   N   | 02115 |  |
+    
+#####Response Body Schema
+
+![Response Body Schema](https://apiportal.agero.com/sites/default/files/TTY_SubmitRequest_ResponseBodySchema.jpg)
+
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|rsaRequestId   |  Confirmation# for the request submitted |String|   Y   | HKJ656568GJGJH |  |
+## Submit RSA Request [/RSA]
+### Submit RSA Request [POST]
+
++ Request (application/json)
+
+    + Header
+
+            x-apiKey: 950443E5953042AB93808D7D2F9B95D4
+            Accept: application/json
+            
+    + Body
+    
+            {
+              "disablementLocation": {
+                "address": {
+                  "streetAddress1": "67 Georgetown Dr",
+                  "streetAddress2": "",
+                  "city": "Framingham",
+                  "state": "MA",
+                  "country": "USA",
+                  "zip": "01702"
+                },
+                "geographicalCoordinates": {
+                  "latitude": 37.33174,
+                  "longitude": -122.030725
+                }
+              },
+              "notificationPreferences": {
+                "preferredMode": "email",
+                "emailId": "tdavid@agero.com",
+                "textMessageNumber": null,
+                "primaryPhoneNumber": null
+              },
+              "serviceDetails": {
+                "disablementReason": "Tow (Not leaking fuel)",
+                "comments": [
+                  {
+                    "value": "2 tires are flat"
+                  },
+                  {
+                    "value": "Please send help    soon"
+                  }
+                ]
+              },
+              "towDestination": {
+                "destinationBusinessName": "Firestone Complete Auto Care",
+                "destinationType": "Repair Facility",
+                "address": {
+                  "streetAddress1": "1450 Worcester Rd",
+                  "streetAddress2": "",
+                  "city": "Framingham",
+                  "state": "MA",
+                  "country": "USA",
+                  "zip": "01702"
+                },
+                "geographicalCoordinates": {
+                  "latitude": 37.33174,
+                  "longitude": -122.030725
+                }
+              },
+              "vehicle": {
+                "make": "Lincoln",
+                "model": "MKS",
+                "year": 2012,
+                "licensePlate": "81ZP67",
+                "mileage": "12000",
+                "vin": "SFJKHGS76926424JH",
+                "color": "Red",
+                "fuelType": "Gasoline"
+              },
+              "requestor": {
+                "callbackNumber": "781-306-1234",
+                "contactInfo": {
+                  "address": {
+                    "streetAddress1": "1490 Worcester Rd",
+                    "streetAddress2": "dgdh",
+                    "city": "Framingham",
+                    "state": "MA",
+                    "country": "USA",
+                    "zip": "01702"
+                  },
+                  "addressType": "Home",
+                  "phoneNumber": "781-306-1234",
+                  "phoneType": "Home"
+                },
+                "name": {
+                  "firstName": "Tom",
+                  "lastName": "Decourcy",
+                  "middleInitial": "C"
+                }
+              }
+            }
+
+            
+     
+    
++ Response 200 (application/json)
+
+    + Body
+
+            {
+            
+                "rsaRequestId":"7537adf9-7187-4561-8c43-d1149901308b"
+            
+            }
+
+## Group Get RSA Request Status
+
+###Description
+Used for retrieving current status of an already created RSA request.
+
+###URL(s)
+
+BaseURI/RSA/{rsaRequestId}
+
+###Request Path Parameters
+
+rsaRequestId - The confirmation Id returned for the RSA request submitted.
+
+###Extended Header Parameters
+   
+    x-apiKey
+    
+###Response Codes
+
+    HTTP 200 : Ok
+    HTTP 400 : Bad Request
+    HTTP 401 : Unauthorized
+    HTTP 403 : Forbidden
+    HTTP 404 : Not Found
+    HTTP 405 : Not Allowed
+    HTTP 500 : Internal Server Error
+    HTTP 501 : Service Unavailable    
+    
+###Sample Request
+
+#####Header
+
+GET BaseURI/RSA/7537adf9-7187-4561-8c43-d1149901308b HTTP 1.1
+
+x-apiKey: 950443E5953042AB93808D7D2F9B95D4
+
+#####Body
+
+n/a
+
+###Sample Response
+
+#####Header
+HTTP/1.1 200 Ok
+
+Content-Type: application/json;charset=UTF-8
+
+#####Body
+{
+
+  "rsaRequestStatus":"IN PROGRESS",
+
+  "link":
+
+  {
+   
+   "rel":"",
+
+   "href":"http://roadsideconnect.com/?id=781-306-1234",
+ 
+  }
+  
+}
+###Response Body Schema 
+
+![Response Body Schema](https://apiportal.agero.com/sites/default/files/TTY_GetRSARequestResponse.jpg)
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|rsaRequestStatus   |Status of the request |String Enumeration |   Y   | IN PROGRESS | Possible Values:REQUEST CONFIRMED IN PROGRESS SERVICE PROVIDER DISPATCHED SERVICE COMPLETE | 
+|link  |Provides the URL for Roadside Connect application which provides up to minute information on the progression of request |Link |   N  |
+
+                                                                                                 
+                
+#####link
+
+![link](https://apiportal.agero.com/sites/default/files/TTY_GetRSARequestResponseLINK.jpg)
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|rel  |Status of the request |String Enumeration |   Y   | IN PROGRESS | 
+|href   |Provides the URL for Roadside Connect application which Connect application which provides up to minute information on the progression of request |URI |   Y  |
+
+
+## Get RSA Request Details [/RSA/{rsaRequestId}]
+
+    
+### Get RSA Request Details [GET]
+
++ Request   ()
+
+    + Header
+
+            x-apiKey: 950443E5953042AB93808D7D2F9B95D4
+    
++ Response 200 (application/json)
+
+    + Body
+            
+            {
+              "rsaRequestStatus":"IN PROGRESS",
+              "link":
+              {
+               "rel":"",
+               "href":"http://roadsideconnect.com/?id=781-306-1234",
+              }
+            }
+
+## Group Get TowDestinations
+
+###Description
+Used for retrieving tow destinations for even parameters.
+
+###URL(s)
+BaseURI/TowDestinations?latitude={latitude}&
+longitude={longitude}&state={state}&zip={zip}
+&maxDrivingDistanceInMiles={distanceInMiles}&resultLimit={numberOfRecords}
+
+
+
+###Request Path Parameters
+
+latitude -  disablemet location's latitude
+
+longitude – disablemet location's longitude
+
+state – disablemet location's state code
+
+zip – disablemet location's five digit zip code
+
+distanceInMiles – list of tow destinations within given radius
+
+numberOfRecords – set a limit on number of records retrieved
+
+
+###Extended Header Parameters
+   
+    x-apiKey
+    
+###Response Codes
+
+    HTTP 200 : Ok
+    HTTP 400 : Bad Request
+    HTTP 401 : Unauthorized
+    HTTP 403 : Forbidden
+    HTTP 404 : Not Found
+    HTTP 405 : Not Allowed
+    HTTP 500 : Internal Server Error
+    HTTP 501 : Service Unavailable    
+    
+###Request Body Schema 
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|geographical Coordinates   |GPS coordinates of the disablement location |Geographical Coordinates |   Y   |  | Please refer to Geographical Coordinates section for further details |
+|state   | |String|   Y   |  MA |  |
+|zip   | |String|   Y   |  02115 |  |
+|maxDrivingDistance   | |Double|   N   |  02115 |  List of tow destinations within given radius     |
+|resultLimit   | |Integer|   N   |  02115 |  Specifies number of Tow destinations returned.If not specified, default is 5.  |
+
+#####Geographical Coordinates
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|longitude   |  Longitude coordinate |Double |   Y   | -122.030725 |
+|latitude   | Latitude Coordinate  |Double |   Y   | 37.33174  |
+
+###Response Body Schema 
+
+![WorkFlow](https://apiportal.agero.com/sites/default/files/TTY_GetTowDestinationResponse.jpg)
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|Id  |Tow Destination id |String |   Y   |  | |
+|address   |Encapsulates the address of the tow destination  |Address|   Y   |   |Refer to Address section for further details  |
+|geographicalCoordinates  |Lat/long for Tow Destination location |Geographical Coordinates |   Y   |  |  Refer to Geographical Coordinates section for further details|
+|destinationBusinessName   |Business name of destination where the vehicle needs to be towed to |String|   Y   | PEPBOYS- Everett  |Max Length:50 No special characters |
+|crowFlyDistanceInMiles  | |Double |   Y   |  | |
+|drivingDistanceInMiles  | |Double |   Y   |  | |
+|amountToPay  | |Int |   Y   |  | |
+
+#####Address
+
+![Address](https://apiportal.agero.com/sites/default/files/TTY_Address.jpg)
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|city   |  |String |   Y   | Boston |Max Length:50 No special characters| 
+|country   |  |String |   Y   | USA |Possible Values: No special characters |
+|state   |  |String |   Y   | MA |Max Length:50 No special characters| 
+|streetAddress1   |  |String |   Y   | 9 High Street |Max Length:50 No special characters| 
+|streetAddress2   |  |String |   N   | Apt B |Max Length:50 No special characters| 
+|zip   |  |String |   Y   | 02115  || 
+   
+    
+#####Geographical Coordinates
+
+![Geographical Coordinates](https://apiportal.agero.com/sites/default/files/TTY_geographicalCoordinates.jpg)
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|longitude   |  Longitude coordinate |Double |   Y   | -122.030725 |
+|latitude   | Latitude Coordinate  |Double |   Y   | 37.33174  |
+
+
+## Get TowDestinations [/TowDestinations?latitude={latitude}&longitude={longitude}&state={state}&zip={zip}&maxDrivingDistanceInMiles={distanceInMiles}&resultLimit={numberOfRecords}]
+
+### Get TowDestinations [GET]
+
++ Request()
+
+    + Header
+
+            x-apiKey: 950443E5953042AB93808D7D2F9B95D4
+    
++ Response 200(application/json)
+
+    + Body
+            
+            {
+            towDestinations: [2]
+            0:  
+            {
+            address: 
+            {
+            city: "MALDEN"
+            country: null
+            state: "MA"
+            streetAddress1: "300 EASTERN AVENUE"
+            streetAddress2: null
+            zip: "02148"
+            }
+            amountToPay: 0
+            crowFlyDistanceInMiles: 1.63
+            destinationBusinessName: "GOODYEAR MALDEN"
+            drivingDistanceInMiles: 2.1
+            geographicalCoordinates: 
+            {
+            latitude: "42.4267"
+            longitude: "-71.0602"
+            }
+            id: "441828.1" }
+            1:  
+            {
+            address: 
+            {
+            city: "MALDEN"
+            country: null
+            state: "MA"
+            streetAddress1: "300 EASTERN AVENUE"
+            streetAddress2: null
+            zip: "02148"
+            }
+            amountToPay: 0
+            crowFlyDistanceInMiles: 1.63
+            destinationBusinessName: "GOODYEAR MALDEN"
+            drivingDistanceInMiles: 2.1
+            geographicalCoordinates: 
+            {
+            latitude: "42.4267"
+            longitude: "-71.0602"
+            }
+            id: "462951.1"
+            }
+            
+            2:  
+            {
+            address: 
+            {
+            city: "STONEHAM"
+            country: null
+            state: "MA"
+            streetAddress1: "454 MAIN STREET"
+            streetAddress2: null
+            zip: "02180"
+            }
+            amountToPay: 0
+            crowFlyDistanceInMiles: 5.01
+            destinationBusinessName: "GOODYEAR STONEHAM"
+            drivingDistanceInMiles: 5.7
+            geographicalCoordinates: 
+            {
+            latitude: "42.4768"
+            longitude: "-71.1004"
+            }
+            id: "441831.1"
+            }
+            }
+
+## Group Error Response
+
+###Description
+Error response is returned if the request if the request data is not compliant with expected schema such as missing required data elements OR if invalid values passed for data elements.
+
+###Sample Response
+HTTP/1.1 404 Ok
+Content-Type:   application/json;charset=UTF-8
+
+{"error":{"message":"No request exists corresponding to rsaRequestId:6458686","code":"RESOURCE_NOT_FOUND"}}
+
+
+###Response Body Schema 
+
+![Response Body Schema ](https://apiportal.agero.com/sites/default/files/TTY_ErrorResponse.jpg)
+
+
+| Data Element | Description | Data Type  | Mandatory (Y/ N) | Value/Example | Note |
+|:-------------|:------------|:-----------|:-----------------|:--------------|:-----|
+|code  |Error identifier code |String |   Y   | InvalidEmailId | |
+|message  |Descriptive message of the root cause of the error |String |   Y   | The email address supplied is invalid | |
+
+###Disablement Reason Descriptions
+
+| |   |    | 
+|:-----|:--------------------|:--------------|
+||Tow  (Not leaking fuel)|The customer should select this reason if they cannot start the vehicle and have attempted a jump start.   There may be various reasons for the customer to select this reason such  as the vehicle is overheating; an electrical/mechanical problem,and/or the brakes are not working.If the vehicle is leaking fuel, has just been in an accident, or vandalized then the customer should contact the Agero Call Center immediately.|  
+
